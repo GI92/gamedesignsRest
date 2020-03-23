@@ -1,0 +1,43 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.gamedesigns",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "6.8.0",
+    "applicationType": "monolith",
+    "baseName": "gamedesignsReact",
+    "packageName": "com.gamedesigns",
+    "packageFolder": "com/gamedesigns",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "prodDatabaseType": "mysql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "MWM2YTU2ZTZlYzYyMjQ4MmQxMWViYjM3ZjU2MGU1MmU5NGRmYjQ4ODcwMWZlZmM5ZjZkYWMyNmMzYTBlMzkzNzM2YjlmYWE0NTMxN2I4MThkMDBjNmViN2M5OGVmNDU0YTE4NjJiYjFmNmIwMWU4ZTdjZjI3MzEzYjVhMzJhMGY=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "react",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1584956473703,
+    "testFrameworks": ["protractor"],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": true,
+    "nativeLanguage": "en",
+    "languages": ["en"],
+    "blueprints": []
+  }
+}
