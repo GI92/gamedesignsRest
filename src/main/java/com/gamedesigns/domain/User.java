@@ -1,8 +1,7 @@
 package com.gamedesigns.domain;
 
-import com.gamedesigns.config.Constants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gamedesigns.config.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -15,9 +14,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A user.
@@ -93,6 +90,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true)
+    @OrderBy("name")
+    private List<Design> designs = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -197,6 +202,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public List<Design> getDesigns() {
+        return designs;
+    }
+
+    public void setDesigns(List<Design> designs) {
+        this.designs = designs;
     }
 
     @Override
