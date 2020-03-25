@@ -44,7 +44,7 @@ public class DesignService {
         final Optional<User> user = userRepository.findOneByLogin(username);
 
         return user
-            .map(u -> designRepository.findAll(u, pageable))
+            .map(u -> designRepository.findAllByUser(u, pageable))
             .orElse(Page.empty());
     }
 
@@ -60,6 +60,8 @@ public class DesignService {
         designDTO.setUsername(username);
 
         final Design design = designMapper.toSource(designDTO);
+        Optional<User> oneByLogin = userRepository.findOneByLogin(username);
+        design.setUser(oneByLogin.get());
         return designRepository.save(design);
     }
 

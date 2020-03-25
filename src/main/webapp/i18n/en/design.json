@@ -1,0 +1,31 @@
+{
+  "design": {
+    "create": {
+      "label": "Create design"
+    },
+    "form": {
+      "name": {
+        "label": "name",
+        "placeholder": "name"
+      },
+      "description": {
+        "label": "description",
+        "placeholder": "description"
+      }
+    },
+    "messages": {
+      "create": {
+        "success": "<strong>Design created!</strong>"
+      },
+      "validate": {
+        "name": {
+          "required": "Design name is required",
+          "maxLength": "Maximum design name length is 100 characters"
+        },
+        "description": {
+          "required": "Please add description to your design"
+        }
+      }
+    }
+  }
+}

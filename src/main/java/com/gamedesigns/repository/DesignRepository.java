@@ -10,9 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DesignRepository extends JpaRepository<Design, Long> {
 
-    Page<Design> findAll(Pageable pageable);
-
-    Page<Design> findAll(User u, Pageable pageable);
+    Page<Design> findAllByUser(User u, Pageable pageable);
 
     Design findByIdAndUser_Login(Long id, String username);
 }

@@ -35,7 +35,7 @@ public class DesignMapper implements SourceDestinationMapper<Design, DesignDTO> 
         source.setName(destination.getName());
         source.setDescription(destination.getDescription());
 
-        return null;
+        return source;
     }
 
     @Override
