@@ -17,6 +17,14 @@ export const CreatePage = (props: IDesignCreateProps) => {
     event.preventDefault();
   };
 
+  // Add rows to textarea
+  const handleDescriptionChange = () => {
+    const textArea = document.querySelector('textarea');
+    if (textArea.clientHeight < textArea.scrollHeight) {
+      textArea.rows = textArea.rows + 1;
+    }
+  };
+
   return (
     <div>
       <Row className="justify-content-center">
@@ -39,15 +47,18 @@ export const CreatePage = (props: IDesignCreateProps) => {
               }}
             />
             <AvField
+              type="textarea"
               name="description"
+              rows="10"
               label={translate('design.form.description.label')}
               placeholder={translate('design.form.description.placeholder')}
+              onChange={handleDescriptionChange}
               validate={{
                 required: {value: true, errorMessage: translate('design.messages.validate.description.required')}
               }}
             />
             <Button id="create-submit" color="primary" type="submit">
-              <Translate contentKey="create.form.button">Create</Translate>
+              <Translate contentKey="design.form.button.create">Create</Translate>
             </Button>
           </AvForm>
         </Col>

@@ -1,16 +1,25 @@
 {
   "design": {
     "create": {
-      "label": "Create design"
+      "label": "Create design",
+      "title": "Create design"
+    },
+    "detail": {
+      "description": "Description",
+      "name": "{{ name }}"
     },
     "form": {
       "name": {
-        "label": "name",
-        "placeholder": "name"
+        "label": "Name",
+        "placeholder": "Please add design name"
       },
       "description": {
-        "label": "description",
-        "placeholder": "description"
+        "label": "Description",
+        "placeholder": "Please write description for your design"
+      },
+      "button": {
+        "create": "Create",
+        "update": "Update"
       }
     },
     "messages": {
