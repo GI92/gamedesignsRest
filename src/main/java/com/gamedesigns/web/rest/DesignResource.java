@@ -4,10 +4,17 @@ import com.gamedesigns.domain.Design;
 import com.gamedesigns.service.DesignService;
 import com.gamedesigns.service.dto.DesignDTO;
 import com.gamedesigns.service.mapper.DesignMapper;
+import io.github.jhipster.web.util.PaginationUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.websocket.server.PathParam;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,17 +30,19 @@ public class DesignResource {
     }
 
     @GetMapping(path = "all")
-    public Page<DesignDTO> getAllDesigns() {
-        final Page<Design> allDesigns = designService.getAllDesigns(0, 10);
+    public ResponseEntity<List<DesignDTO>> getAllDesigns(Pageable pageable) {
+        final Page<DesignDTO> page = designService.getAllDesigns(pageable);
 
-        return allDesigns.map(designMapper::toDestination);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "all/{username}")
-    public Page<DesignDTO> getAllDesigns(@PathVariable("username") String username) {
-        final Page<Design> allDesigns = designService.getAllDesigns(0, 10, username);
+    public ResponseEntity<List<DesignDTO>> getAllDesigns(Pageable pageable, @PathVariable("username") String username) {
+        final Page<DesignDTO> page = designService.getAllDesigns(pageable, username);
 
-        return allDesigns.map(designMapper::toDestination);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "{id}")
@@ -42,7 +51,7 @@ public class DesignResource {
 
         return design
             .map(designMapper::toDestination)
-            .get();
+            .orElse(new DesignDTO());
     }
 
     @PostMapping

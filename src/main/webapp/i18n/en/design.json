@@ -1,8 +1,11 @@
 {
   "design": {
     "create": {
-      "label": "Create design",
-      "title": "Create design"
+      "label": "Create new design",
+      "title": "Create new design"
+    },
+    "delete": {
+      "question": "Are you sure you want to delete design {{ name }}?"
     },
     "detail": {
       "description": "Description",
@@ -18,9 +21,15 @@
         "placeholder": "Please write description for your design"
       },
       "button": {
+        "cancel": "Cancel",
         "create": "Create",
+        "delete": "Delete",
+        "edit": "Edit",
         "update": "Update"
       }
+    },
+    "home": {
+      "title": "Designs"
     },
     "messages": {
       "create": {
@@ -32,9 +41,11 @@
           "maxLength": "Maximum design name length is 100 characters"
         },
         "description": {
-          "required": "Please add description to your design"
+          "required": "Design description is required"
         }
       }
-    }
+    },
+    "name": "Name",
+    "username": "Designer"
   }
 }

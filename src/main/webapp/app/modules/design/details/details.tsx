@@ -1,72 +1,107 @@
-import React, {useEffect} from 'react';
-import {Button, Col, Row} from 'reactstrap';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Translate, translate} from 'react-jhipster';
-import {AvField, AvForm} from 'availity-reactstrap-validation';
+import {Link, RouteComponentProps} from 'react-router-dom';
+import {Button, Row, Table} from 'reactstrap';
+import {getSortState, JhiItemCount, JhiPagination, Translate} from 'react-jhipster';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {ITEMS_PER_PAGE} from 'app/shared/util/pagination.constants';
+import {getDesigns} from 'app/modules/design/details/details.reducer';
 import {IRootState} from 'app/shared/reducers';
-import {getSession} from 'app/shared/reducers/authentication';
-import {RouteComponentProps} from 'react-router-dom';
-import {getDesign, reset} from 'app/modules/design/details/details.reducer';
 
-export interface IDesignDetailsProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {
+export interface IDesignsPageProps extends StateProps, DispatchProps, RouteComponentProps<{}> {
 }
 
-export const DetailsPage = (props: IDesignDetailsProps) => {
+export const DesignsPage = (props: IDesignsPageProps) => {
+  const [pagination, setPagination] = useState(getSortState(props.location, ITEMS_PER_PAGE));
 
   useEffect(() => {
-    props.getDesign(props.match.params.id);
-  }, []);
+    props.getDesigns(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    props.history.push(`${props.location.pathname}?page=${pagination.activePage}&sort=${pagination.sort},${pagination.order}`);
+  }, [pagination]);
 
-  const {design} = props;
+  const sort = p => () =>
+    setPagination({
+      ...pagination,
+      order: pagination.order === 'asc' ? 'desc' : 'asc',
+      sort: p
+    });
 
-  // Add rows to textarea
-  const handleDescriptionChange = () => {
-    const textArea = document.querySelector('textarea');
-    if (textArea.clientHeight < textArea.scrollHeight) {
-      textArea.rows = textArea.rows + 1;
-    }
-  };
+  const handlePagination = currentPage =>
+    setPagination({
+      ...pagination,
+      activePage: currentPage
+    });
 
+  const {designs, match, totalItems} = props;
   return (
     <div>
-      <h2 id="design-title">
-        <Translate contentKey="design.detail.name" interpolate={{name: design.name}}/>
+      <h2 id="designs-page-heading">
+        <Translate contentKey="design.home.title">Designs</Translate>
+        <Link to={`${match.url}/create`} className="btn btn-primary float-right jh-create-entity">
+          <FontAwesomeIcon icon="plus"/> <Translate contentKey="design.create.label">Create a new
+          design</Translate>
+        </Link>
       </h2>
-      <AvForm/>
-      <Row className="justify-content-between">
-        <Col md="8">
-          <AvForm>
-            <AvField
-              type="textarea"
-              name="description"
-              rows="10"
-              label={translate('design.form.description.label')}
-              placeholder={translate('design.form.description.placeholder')}
-              value={design.description}
-              onChange={handleDescriptionChange}
-              validate={{
-                required: {value: true, errorMessage: translate('design.messages.validate.description.required')}
-              }}
-            />
-            <Button id="create-submit" color="primary" type="submit">
-              <Translate contentKey="design.form.button.update">Create</Translate>
-            </Button>
-          </AvForm>
-        </Col>
-      </Row>
+      <Table responsive striped>
+        <thead>
+        <tr>
+          <th className="hand" onClick={sort('name')}>
+            <Translate contentKey="design.name">Login</Translate>
+            <FontAwesomeIcon icon="sort"/>
+          </th>
+          <th className="hand" onClick={sort('username')}>
+            <Translate contentKey="design.username">Username</Translate>
+            <FontAwesomeIcon icon="sort"/>
+          </th>
+          <th/>
+        </tr>
+        </thead>
+        <tbody>
+        {designs.map((design, i) => (
+          <tr id={design.name} key={`design-${i}`}>
+            <td>{design.name}</td>
+            <td>{design.username}</td>
+            <td className="text-right">
+              <div className="btn-group flex-btn-group-container">
+                <Button tag={Link} to={`${match.url}/${design.id}`} color="info" size="sm">
+                  <FontAwesomeIcon icon="eye"/>{' '}
+                  <span className="d-none d-md-inline">
+                      <Translate contentKey="entity.action.view">View</Translate>
+                    </span>
+                </Button>
+              </div>
+            </td>
+          </tr>
+        ))}
+        </tbody>
+      </Table>
+      <div className={designs && designs.length > 0 ? '' : 'd-none'}>
+        <Row className="justify-content-center">
+          <JhiItemCount page={pagination.activePage} total={totalItems} itemsPerPage={pagination.itemsPerPage}
+                        i18nEnabled/>
+        </Row>
+        <Row className="justify-content-center">
+          <JhiPagination
+            activePage={pagination.activePage}
+            onSelect={handlePagination}
+            maxButtons={5}
+            itemsPerPage={pagination.itemsPerPage}
+            totalItems={props.totalItems}
+          />
+        </Row>
+      </div>
     </div>
   );
 };
 
-const mapStateToProps = ({authentication, design}: IRootState) => ({
-  account: authentication.account,
-  isAuthenticated: authentication.isAuthenticated,
-  design: design.design
+const mapStateToProps = (storeState: IRootState) => ({
+  designs: storeState.design.designs,
+  totalItems: storeState.design.totalItems
 });
 
-const mapDispatchToProps = {getSession, getDesign, reset};
+const mapDispatchToProps = {getDesigns};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(DetailsPage)
+export default connect(mapStateToProps, mapDispatchToProps)(DesignsPage);

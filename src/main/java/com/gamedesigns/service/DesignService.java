@@ -11,7 +11,6 @@ import com.gamedesigns.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,17 +33,15 @@ public class DesignService {
         this.designMapper = designMapper;
     }
 
-    public Page<Design> getAllDesigns(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return designRepository.findAll(pageable);
+    public Page<DesignDTO> getAllDesigns(Pageable pageable) {
+        return designRepository.findAll(pageable).map(designMapper::toDestination);
     }
 
-    public Page<Design> getAllDesigns(int page, int size, String username) {
-        final Pageable pageable = PageRequest.of(page, size);
+    public Page<DesignDTO> getAllDesigns(Pageable pageable, String username) {
         final Optional<User> user = userRepository.findOneByLogin(username);
 
         return user
-            .map(u -> designRepository.findAllByUser(u, pageable))
+            .map(u -> designRepository.findAllByUser(u, pageable).map(designMapper::toDestination))
             .orElse(Page.empty());
     }
 
@@ -66,7 +63,9 @@ public class DesignService {
     }
 
     public void delete(Long id) {
-        designRepository.deleteById(id);
+        if (designRepository.existsById(id)) {
+            designRepository.deleteById(id);
+        }
     }
 
     public Design update(DesignDTO designDTO) {
