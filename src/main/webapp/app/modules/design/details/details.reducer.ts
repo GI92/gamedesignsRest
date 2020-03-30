@@ -108,6 +108,14 @@ export const getDesigns: ICrudGetAllAction<IDesign> = (page, size, sort) => {
   };
 };
 
+export const getMyDesigns: ICrudGetAllAction<IDesign> = (page, size, sort) => {
+  const requestUrl = `${apiUrl}/all/me${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.FETCH_DESIGNS,
+    payload: axios.get<IDesign>(requestUrl)
+  };
+};
+
 export const getDesign: ICrudGetAction<IDesign> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {

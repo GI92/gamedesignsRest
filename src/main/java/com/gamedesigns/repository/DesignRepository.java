@@ -13,4 +13,8 @@ public interface DesignRepository extends JpaRepository<Design, Long> {
     Page<Design> findAllByUser(User u, Pageable pageable);
 
     Design findByIdAndUser_Login(Long id, String username);
+
+    boolean existsByIdAndUser_Login(Long id, String username);
+
+    boolean deleteByIdAndUser_Login(Long id, String name);
 }

@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import {Link, RouteComponentProps} from 'react-router-dom';
+import {Link, matchPath, RouteComponentProps} from 'react-router-dom';
 import {Button, Row, Table} from 'reactstrap';
 import {getSortState, JhiItemCount, JhiPagination, Translate} from 'react-jhipster';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {ITEMS_PER_PAGE} from 'app/shared/util/pagination.constants';
-import {getDesigns} from 'app/modules/design/details/details.reducer';
+import {getDesigns, getMyDesigns} from 'app/modules/design/details/details.reducer';
 import {IRootState} from 'app/shared/reducers';
 
 export interface IDesignsPageProps extends StateProps, DispatchProps, RouteComponentProps<{}> {
@@ -15,7 +15,18 @@ export const DesignsPage = (props: IDesignsPageProps) => {
   const [pagination, setPagination] = useState(getSortState(props.location, ITEMS_PER_PAGE));
 
   useEffect(() => {
-    props.getDesigns(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    const pathname = props.location.pathname;
+
+    const myDesigns = matchPath(pathname, {
+      path: '**/me'
+    });
+
+    if (myDesigns && myDesigns.params) {
+      props.getMyDesigns(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    } else {
+      props.getDesigns(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    }
+
     props.history.push(`${props.location.pathname}?page=${pagination.activePage}&sort=${pagination.sort},${pagination.order}`);
   }, [pagination]);
 
@@ -63,7 +74,7 @@ export const DesignsPage = (props: IDesignsPageProps) => {
             <td>{design.username}</td>
             <td className="text-right">
               <div className="btn-group flex-btn-group-container">
-                <Button tag={Link} to={`${match.url}/${design.id}`} color="info" size="sm">
+                <Button tag={Link} to={`/design/${design.id}`} color="info" size="sm">
                   <FontAwesomeIcon icon="eye"/>{' '}
                   <span className="d-none d-md-inline">
                       <Translate contentKey="entity.action.view">View</Translate>
@@ -99,7 +110,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   totalItems: storeState.design.totalItems
 });
 
-const mapDispatchToProps = {getDesigns};
+const mapDispatchToProps = {getDesigns, getMyDesigns};
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

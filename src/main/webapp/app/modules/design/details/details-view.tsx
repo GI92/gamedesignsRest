@@ -14,7 +14,11 @@ export interface IDesignDetailsProps extends StateProps, DispatchProps, RouteCom
 export const DetailsPage = (props: IDesignDetailsProps) => {
 
   useEffect(() => {
-    props.getDesign(props.match.params.id);
+    if (parseInt(props.match.params.id)) {
+      props.getDesign(props.match.params.id);
+    } else {
+      props.history.push('/');
+    }
   }, []);
 
   const {design, match} = props;

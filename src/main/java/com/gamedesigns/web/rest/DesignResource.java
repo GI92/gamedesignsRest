@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -30,7 +31,7 @@ public class DesignResource {
     }
 
     @GetMapping(path = "all")
-    public ResponseEntity<List<DesignDTO>> getAllDesigns(Pageable pageable) {
+    public ResponseEntity<List<DesignDTO>> getAllMyDesigns(Pageable pageable) {
         final Page<DesignDTO> page = designService.getAllDesigns(pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -45,6 +46,16 @@ public class DesignResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping(path = "all/me")
+    @PreAuthorize("authenticated")
+    public ResponseEntity<List<DesignDTO>> getAllDesigns(Pageable pageable) {
+        final Page<DesignDTO> page = designService.getAllMyDesigns(pageable);
+
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+
     @GetMapping(path = "{id}")
     public DesignDTO getByID(@PathParam("id") @PathVariable Long id) {
         final Optional<Design> design = designService.getByID(id);
@@ -55,6 +66,7 @@ public class DesignResource {
     }
 
     @PostMapping
+    @PreAuthorize("authenticated")
     public DesignDTO createDesign(@RequestBody DesignDTO designDTO) {
         final Design design = designService.create(designDTO);
 
@@ -62,6 +74,7 @@ public class DesignResource {
     }
 
     @PatchMapping
+    @PreAuthorize("authenticated")
     public DesignDTO updateDesign(@RequestBody DesignDTO designDTO) {
         final Design design = designService.update(designDTO);
 
@@ -69,6 +82,7 @@ public class DesignResource {
     }
 
     @DeleteMapping(path = "{id}")
+    @PreAuthorize("authenticated")
     public void deleteDesign(@PathVariable Long id) {
         designService.delete(id);
     }

@@ -31,6 +31,10 @@
         "database": "Database",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
+      "design": {
+        "create": "Create design",
+        "my": "My designs"
+      },
       "language": "Language"
     },
     "form": {

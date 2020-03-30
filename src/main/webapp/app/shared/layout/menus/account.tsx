@@ -1,13 +1,16 @@
 import React from 'react';
 import MenuItem from 'app/shared/layout/menus/menu-item';
-import { DropdownItem } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavLink as Link } from 'react-router-dom';
-import { Translate, translate } from 'react-jhipster';
-import { NavDropdown } from './menu-components';
+import {Translate, translate} from 'react-jhipster';
+import {NavDropdown} from './menu-components';
 
 const accountMenuItemsAuthenticated = (
   <>
+    <MenuItem icon="list" to="/design/me">
+      <Translate contentKey="global.menu.design.my">My designs</Translate>
+    </MenuItem>
+    <MenuItem icon="plus" to="/design/create">
+      <Translate contentKey="global.menu.design.create">Create design</Translate>
+    </MenuItem>
     <MenuItem icon="wrench" to="/account/settings">
       <Translate contentKey="global.menu.account.settings">Settings</Translate>
     </MenuItem>

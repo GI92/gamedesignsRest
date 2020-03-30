@@ -8,6 +8,7 @@ import com.gamedesigns.security.SecurityUtils;
 import com.gamedesigns.service.dto.DesignDTO;
 import com.gamedesigns.service.mapper.DesignMapper;
 import com.gamedesigns.web.rest.errors.BadRequestAlertException;
+import com.gamedesigns.web.rest.errors.UnauthorizedAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,14 @@ public class DesignService {
         return designRepository.findAll(pageable).map(designMapper::toDestination);
     }
 
+    public Page<DesignDTO> getAllMyDesigns(Pageable pageable) {
+        final User user = retrieveUser();
+
+        return designRepository
+            .findAllByUser(user, pageable)
+            .map(designMapper::toDestination);
+    }
+
     public Page<DesignDTO> getAllDesigns(Pageable pageable, String username) {
         final Optional<User> user = userRepository.findOneByLogin(username);
 
@@ -50,34 +59,33 @@ public class DesignService {
     }
 
     public Design create(DesignDTO designDTO) {
-        final String username = SecurityUtils
-            .getCurrentUserLogin()
-            .orElseThrow(() -> new BadRequestAlertException("", "", ""));
+        final User user = retrieveUser();
+        final String username = user.getLogin();
 
         designDTO.setUsername(username);
 
         final Design design = designMapper.toSource(designDTO);
-        Optional<User> oneByLogin = userRepository.findOneByLogin(username);
-        design.setUser(oneByLogin.get());
+        design.setUser(user);
         return designRepository.save(design);
     }
 
     public void delete(Long id) {
-        if (designRepository.existsById(id)) {
-            designRepository.deleteById(id);
+        final String username = SecurityUtils
+            .getCurrentUserLogin()
+            .orElse("");
+
+        if (designRepository.existsByIdAndUser_Login(id, username)) {
+            designRepository.deleteByIdAndUser_Login(id, username);
         }
     }
 
     public Design update(DesignDTO designDTO) {
-        final String username = SecurityUtils
-            .getCurrentUserLogin()
-            .orElseThrow(() -> new BadRequestAlertException("", "", ""));
-        userRepository.findOneByLogin(username);
+        final User user = retrieveUser();
 
-        final Design design = designRepository.findByIdAndUser_Login(designDTO.getId(), username);
+        final Design design = designRepository.findByIdAndUser_Login(designDTO.getId(), user.getLogin());
 
         if (design == null) {
-            throw new BadRequestAlertException("Design doesn't exist", "design.id", "idmissing");
+            throw new BadRequestAlertException("Design doesn't exist", "design", "idmissing");
         }
 
         if (designDTO.getName() != null) {
@@ -89,5 +97,15 @@ public class DesignService {
         }
 
         return designRepository.save(design);
+    }
+
+    private User retrieveUser() {
+        final String username = SecurityUtils
+            .getCurrentUserLogin()
+            .orElseThrow(UnauthorizedAccessException::new);
+
+        return userRepository
+            .findOneByLogin(username)
+            .orElseThrow(UnauthorizedAccessException::new);
     }
 }
